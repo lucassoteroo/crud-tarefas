@@ -46,4 +46,19 @@ export class Database {
 
         return data
     }
+
+    // atualiza a tarefa na tabela
+    update(table, id, data) {
+        const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+        if (rowIndex > -1) {
+            this.#database[table][rowIndex] = {
+                id,
+                ...this.#database[table][rowIndex],
+                updated_at: new Date().toLocaleDateString('pt-BR'),
+                ...data
+            }
+            this.#persist()
+        }
+    }
 }
