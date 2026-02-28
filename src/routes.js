@@ -67,5 +67,18 @@ export const routes = [
             
             return res.writeHead(204).end()
         }
+    },
+    {
+        method: 'PATCH',
+        path: buildRoutePath('/task/:id/:status'),
+        handler: (req, res) => {
+            const { id, status } = req.params
+
+            database.updateStatus('tasks', id, {
+                status
+            })
+
+            return res.writeHead(204).end()
+        }
     }
 ]

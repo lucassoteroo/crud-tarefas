@@ -62,6 +62,20 @@ export class Database {
         }
     }
 
+    // atualiza o status da task
+    updateStatus(table, id, data) {
+        const rowIndex = this.#database[table].findIndex(row => row.id === id)
+        
+        if (rowIndex > -1) {
+            this.#database[table][rowIndex] = {
+                id,
+                ...this.#database[table][rowIndex],
+                completed_at: data.status
+            }
+            this.#persist()
+        }
+    }
+
     // deleta a task da tabela
     delete(table, id) {
         const rowIndex = this.#database[table].findIndex(row => row.id === id)
