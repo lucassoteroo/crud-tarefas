@@ -6,6 +6,19 @@ const database = new Database()
 
 export const routes = [
     {
+        method: 'GET',
+        path: buildRoutePath('/tasks'),
+        handler: (req, res) => {
+            const { search } = req.body
+
+            const tasks = database.select('tasks', search ? {
+                title: search,
+            } : null)
+
+            return res.end(JSON.stringify(tasks))
+        }
+    },
+    {
         method: 'POST',
         path: buildRoutePath('/task'),
         handler: (req, res) => {
@@ -27,5 +40,5 @@ export const routes = [
 
             return res.writeHead(201).end()
         }
-    }
+    },
 ]
