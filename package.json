@@ -1,0 +1,12 @@
+{
+  "name": "crud-tarefas",
+  "version": "1.0.0",
+  "description": "Desafio para criar um CRUD",
+  "license": "ISC",
+  "author": "lucas sotero",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch src/server.js"
+  }
+}
