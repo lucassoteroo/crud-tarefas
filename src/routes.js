@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto"
 import { buildRoutePath } from "./utils/build-route-path.js"
 import { Database } from "./database.js"
+import { processFile } from "./utils/import-csv.js"
 
 const database = new Database()
 
@@ -22,24 +23,56 @@ export const routes = [
     {
         method: 'POST',
         path: buildRoutePath('/task'),
-        handler: (req, res) => {
-            const {
-                title,
-                description,
-            } = req.body
+        handler: async (req, res) => {
+            const tasks = database.select('tasks', '' ? {
+                title: '',
+                description: ''
+            } : null)
 
-            const task = {
-                id: randomUUID(),
-                title,
-                description,
-                created_at: new Date().toLocaleDateString('pt-BR'),
-                completed_at: '',
-                updated_at: ''
+            if (tasks.length === 0 && req.body.title === '') {
+                try {
+                    const records = await processFile('tasks');
+
+                    for (const record of records) {
+                        const { title, description } = record
+
+                        const task = {
+                             id: randomUUID(),
+                             title,
+                             description,
+                             created_at: new Date().toLocaleDateString('pt-BR'),
+                             completed_at: '',
+                             updated_at: ''
+                         }
+
+                         database.insert('tasks', task);
+                    }
+
+                    return res.writeHead(201).end()
+                } catch {
+                    return res.writeHead(500).end()
+                }
+            } else if (tasks.length > 0 && req.body.title !== '') {
+                const {
+                    title,
+                    description,
+                } = req.body
+    
+                const task = {
+                    id: randomUUID(),
+                    title,
+                    description,
+                    created_at: new Date().toLocaleDateString('pt-BR'),
+                    completed_at: '',
+                    updated_at: ''
+                }
+
+                database.insert('tasks', task)
+                
+                return res.writeHead(201).end()
+            } else {
+                return res.writeHead(500).end()
             }
-
-            database.insert('tasks', task)
-
-            return res.writeHead(201).end()
         }
     },
     {
